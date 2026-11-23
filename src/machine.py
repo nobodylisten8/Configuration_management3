@@ -49,6 +49,7 @@ class Machine:
             "LOAD": self.load_constant,
             "READ": self.read_register,
             "STORE": self.store_register,
+            "ABS": self.absolute,
         }
         name = instruction.operation.name
         if name not in handlers:
@@ -76,3 +77,7 @@ class Machine:
         """STORE B, C, D: записать R[B] в M[R[D] + C]."""
         self.write_memory(self.registers[pointer] + offset,
                           self.registers[source])
+
+    def absolute(self, source: int, pointer: int) -> None:
+        """ABS B, C: записать abs(R[B]) в M[R[C]], сохранив регистры."""
+        self.write_memory(self.registers[pointer], abs(self.registers[source]))
