@@ -1,0 +1,37 @@
+[
+  {
+    "name": "copy_array",
+    "start": 1100,
+    "expected": [5, -7, 0, 42],
+    "source_start": 1000,
+    "source": [5, -7, 0, 42]
+  },
+  {
+    "name": "abs_scalar",
+    "start": 1200,
+    "expected": [13, 0, 21],
+    "source_start": null,
+    "source": []
+  },
+  {
+    "name": "vector_mixed",
+    "start": 1100,
+    "expected": [8, 3, 1, 0, 5, 13, 21, 34],
+    "source_start": 1000,
+    "source": [-8, 3, -1, 0, 5, -13, 21, -34]
+  },
+  {
+    "name": "vector_negative",
+    "start": 1100,
+    "expected": [1, 2, 3, 4, 5, 6, 7, 8],
+    "source_start": 1000,
+    "source": [-1, -2, -3, -4, -5, -6, -7, -8]
+  },
+  {
+    "name": "vector_boundaries",
+    "start": 1100,
+    "expected": [0, 67108863, 67108864, 1, 1, 0, 32767, 32768],
+    "source_start": 1000,
+    "source": [0, 67108863, -67108864, 1, -1, 0, 32767, -32768]
+  }
+]

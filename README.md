@@ -1,7 +1,7 @@
 # Ассемблер и интерпретатор УВМ: вариант 1
 
 Практическая работа № 3. Реализация на Python 3.10+ без внешних
-зависимостей времени выполнения. Текущий этап: 4 из 5.
+зависимостей времени выполнения. Выполнены все 5 этапов.
 
 ## Запуск и проверка
 
@@ -11,6 +11,7 @@
 python -m src assemble examples/specification.asm output.bin --test
 python -m unittest discover -s tests -v
 python -m tools.check_quality
+python -m tools.demo
 ```
 
 Windows: `run.bat assemble examples/specification.asm output.bin --test`.
@@ -143,6 +144,43 @@ python -m src run output/abs_scalar.bin output/abs_scalar.xml --start 1200 --end
 Входные значения: `[-13, 0, 21]`. Проверяемый результат в 1200..1202:
 `[13, 0, 21]`. Тесты дополнительно проверяют минимальную константу,
 совпадающие B и C, сохранность регистров и недопустимые адреса.
+
+## Этап 5: три вектора длины 8
+
+Каждая программа инициализирует исходный вектор в 1000..1007, читает
+каждый элемент через READ и выполняет ABS с записью в новый вектор
+1100..1107. Исходный вектор сохраняется. Поскольку в заданном наборе
+команд нет переходов, восемь операций явно развёрнуты в исходнике.
+
+| Программа в examples | Вход | Новый вектор |
+| --- | --- | --- |
+| vector_mixed.asm | -8, 3, -1, 0, 5, -13, 21, -34 | 8, 3, 1, 0, 5, 13, 21, 34 |
+| vector_negative.asm | -1, -2, -3, -4, -5, -6, -7, -8 | 1, 2, 3, 4, 5, 6, 7, 8 |
+| vector_boundaries.asm | 0, MAX, MIN, 1, -1, 0, 32767, -32768 | 0, MAX, 67108864, 1, 1, 0, 32767, 32768 |
+
+MAX = 67108863, MIN = -67108864. Во всех случаях длина нового вектора — 8.
+Каждый бинарный файл содержит 49 команд и занимает 294 байта.
+
+```console
+python -m src assemble examples/vector_mixed.asm output/vector_mixed.bin --test
+python -m src run output/vector_mixed.bin output/vector_mixed.xml --start 1100 --end 1107
+python -m src assemble examples/vector_negative.asm output/vector_negative.bin
+python -m src run output/vector_negative.bin output/vector_negative.xml --start 1100 --end 1107
+python -m src assemble examples/vector_boundaries.asm output/vector_boundaries.bin
+python -m src run output/vector_boundaries.bin output/vector_boundaries.xml --start 1100 --end 1107
+```
+
+`python -m tools.demo` собирает и выполняет все пять примеров (копирование,
+скалярный ABS и три вектора). Он сравнивает адреса и значения полученного
+XML с `examples/cases.json` и проверяет сохранность исходных массивов.
+В `examples/expected/` находятся текстовые эталонные XML для проверки;
+реальные результаты создаются в `output/`, который исключён из Git.
+Бинарные файлы собираются локально и в репозиторий не попадают.
+
+`tools.demo`: load_cases читает примеры, verify_xml проверяет дамп,
+run_case собирает и выполняет один пример, main запускает демонстрацию.
+Полный справочник функций и настроек: [docs/api.md](docs/api.md).
+Результаты по этапам и правилам: [docs/verification.md](docs/verification.md).
 
 ## Модули и функции
 
